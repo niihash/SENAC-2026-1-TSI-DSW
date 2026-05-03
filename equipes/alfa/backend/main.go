@@ -120,7 +120,7 @@ func createTask(w http.ResponseWriter, r *http.Request) {
 
 	id, _ := res.LastInsertId()
 	t.ID = int(id)
-	
+
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(t)
 }
