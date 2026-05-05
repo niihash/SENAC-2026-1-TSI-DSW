@@ -73,3 +73,29 @@ taskForm.addEventListener('submit', async (e) => {
         console.error('Erro ao criar tarefa:', error);
     }
 });
+
+async function completeTask(id, liElement) {
+    try {
+        const response = await fetch(`${API_URL}/${id}`, { method: 'PUT' });
+
+        if (response.ok) {
+            liElement.classList.add('completed');
+            const completeBtn = liElement.querySelector('.btn-complete');
+            if (completeBtn) completeBtn.remove();
+        }
+    } catch (error) {
+        console.error('Erro ao concluir tarefa:', error);
+    }
+}
+
+async function deleteTask(id, liElement) {
+    try {
+        const response = await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
+
+        if (response.ok) {
+            liElement.remove();
+        }
+    } catch (error) {
+        console.error('Erro ao excluir tarefa:', error);
+    }
+}
