@@ -142,3 +142,17 @@ ul {
 .btn-delete {
   background-color: var(--danger);
 }
+
+@media (max-width: 480px) {
+  .container {
+    padding: 1.5rem;
+  }
+  
+  #task-form {
+    flex-direction: column;
+  }
+  
+  button {
+    width: 100%;
+  }
+}
