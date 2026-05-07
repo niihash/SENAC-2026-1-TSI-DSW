@@ -66,3 +66,26 @@ func createTasksHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(t)
 }
 
+// PUT: Atualizar status da tarefa (Concluir)
+func updateTasksHandler(w http.ResponseWriter, r *http.Request) {
+	idStr := strings.TrimPrefix(r.URL.Path, "/api/v1/tasks/")
+	id, _ := strconv.Atoi(idStr)
+
+	var t Task
+	json.NewDecoder(r.Body).Decode(&t)
+
+	stmt, err := db.Prepare("UPDATE tasks SET completed = ? WHERE id = ?")
+	if err != nil {
+		http.Error(w, "Erro no servidor", http.StatusInternalServerError)
+		return
+	}
+	defer stmt.Close()
+
+	_, err = stmt.Exec(t.Completed, id)
+	if err != nil {
+		http.Error(w, "Erro ao atualizar", http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+}
