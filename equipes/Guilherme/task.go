@@ -89,3 +89,24 @@ func updateTasksHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 }
+
+// DELETE: Remover uma tarefa
+func deleteTasksHandler(w http.ResponseWriter, r *http.Request) {
+	idStr := strings.TrimPrefix(r.URL.Path, "/api/v1/tasks/")
+	id, _ := strconv.Atoi(idStr)
+
+	stmt, err := db.Prepare("DELETE FROM tasks WHERE id = ?")
+	if err != nil {
+		http.Error(w, "Erro no servidor", http.StatusInternalServerError)
+		return
+	}
+	defer stmt.Close()
+
+	_, err = stmt.Exec(id)
+	if err != nil {
+		http.Error(w, "Erro ao deletar", http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
+}
