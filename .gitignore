@@ -1,0 +1,4 @@
+backend/.env
+backend-test.log
+backend-test.err.log
+tasks.db

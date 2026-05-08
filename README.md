@@ -1,74 +1,89 @@
 # Lista de Tarefas
 
-Aplicacao web de lista de tarefas com frontend em HTML/CSS/JavaScript, backend em Go e persistencia em MySQL.
+Aplicacao web de lista de tarefas com frontend em HTML, CSS e JavaScript, backend em Go e persistencia em MySQL.
 
-## Estrutura
+## Estrutura do projeto
 
 ```text
+backend/    API REST em Go
+db/         Scripts SQL do banco de dados
 frontend/   Interface web
-backend/    API RESTful em Go
-db/         Scripts de banco de dados
 ```
 
-## Requisitos locais
+## Requisitos
 
 - Go 1.22 ou superior
-- Docker ou Podman para subir o MySQL padronizado
+- Docker ou Podman
+- Git
 
-## Banco de dados com container
+## Configuracao do ambiente
 
-Suba o MySQL padronizado:
+O backend usa variaveis de ambiente para se conectar ao banco. O arquivo real de ambiente deve existir apenas na maquina local e nao deve ser commitado.
 
-```powershell
-docker compose up -d mysql
-```
-
-Ou, usando Podman:
-
-```powershell
-podman compose up -d mysql
-```
-
-O container usa MySQL 8.4, cria o banco `todo_list` e executa o script `db/task.sql` automaticamente.
-
-## Variaveis de ambiente do backend
-
-Crie o arquivo local de ambiente a partir do exemplo:
+Crie o arquivo local a partir do exemplo versionado:
 
 ```powershell
 copy backend\.env.example backend\.env
 ```
 
-O backend carrega automaticamente o arquivo `backend/.env`. O exemplo ja esta alinhado com o container MySQL:
+No Git Bash, use:
 
-```env
-DB_USER=root
-DB_PASSWORD=todo_root
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_NAME=todo_list
-CORS_ALLOWED_ORIGIN=http://localhost:8080
+```bash
+cp backend/.env.example backend/.env
 ```
 
-Se alguma variavel ja estiver definida no sistema, ela tem prioridade sobre o `.env`.
+Depois disso, confira se os valores do `backend/.env` estao de acordo com o seu ambiente local. O arquivo `backend/.env.example` serve apenas como modelo seguro para o projeto.
 
-## Executar
+## Banco de dados
 
-Entre na pasta do backend, baixe as dependencias e suba a aplicacao:
+Suba o MySQL padronizado com Docker:
+
+```powershell
+docker compose up -d mysql
+```
+
+Ou, se estiver usando Podman:
+
+```powershell
+podman compose up -d mysql
+```
+
+O container cria o banco usado pela aplicacao e executa automaticamente o script `db/task.sql` na primeira inicializacao do volume.
+
+Para recriar o banco do zero durante testes locais:
+
+```powershell
+docker compose down -v
+docker compose up -d mysql
+```
+
+## Executar a aplicacao
+
+Entre na pasta do backend:
 
 ```powershell
 cd backend
+```
+
+Baixe ou atualize as dependencias:
+
+```powershell
 go mod tidy
+```
+
+Inicie a aplicacao:
+
+```powershell
 go run .
 ```
 
-Abra no navegador:
+Acesse no navegador:
 
 ```text
 http://localhost:8080
 ```
 
-## Endpoints
+## Endpoints da API
 
 ```text
 GET    /api/v1/tasks
@@ -77,6 +92,14 @@ PUT    /api/v1/tasks/{id}
 DELETE /api/v1/tasks/{id}
 ```
 
-## Observacao
+## Testes manuais sugeridos
 
-O `compose.yaml` padroniza apenas o MySQL. A aplicacao Go continua rodando localmente durante o desenvolvimento.
+Com a aplicacao rodando, valide pelo navegador se e possivel:
+
+- Criar uma tarefa
+- Listar as tarefas cadastradas
+- Marcar uma tarefa como concluida
+- Excluir uma tarefa
+
+Tambem teste entradas invalidas, como campo vazio, texto muito longo e conteudo HTML, para confirmar as validacoes do backend e a exibicao segura no frontend.
+
