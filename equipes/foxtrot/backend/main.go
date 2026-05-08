@@ -120,3 +120,76 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 
 	json.NewEncoder(w).Encode(map[string]string{"token": tokenString})
 }
+
+// --- COMMIT 10: Handlers de CRUD de Tarefas ---
+func tasksHandler(w http.ResponseWriter, r *http.Request) {
+	userID := r.Context().Value("user_id").(float64)
+
+	if r.Method == http.MethodGet {
+		rows, _ := db.Query("SELECT id, title, completed FROM tasks WHERE user_id = ?", userID)
+		defer rows.Close()
+
+		var tasks []Task
+		for rows.Next() {
+			var t Task
+			rows.Scan(&t.ID, &t.Title, &t.Completed)
+			tasks = append(tasks, t)
+		}
+		json.NewEncoder(w).Encode(tasks)
+	} else if r.Method == http.MethodPost {
+		var t Task
+		json.NewDecoder(r.Body).Decode(&t)
+		db.Exec("INSERT INTO tasks (user_id, title) VALUES (?, ?)", userID, t.Title)
+		w.WriteHeader(http.StatusCreated)
+	} else if r.Method == http.MethodPut {
+		var t Task
+		json.NewDecoder(r.Body).Decode(&t)
+		_, err := db.Exec("UPDATE tasks SET title = ?, completed = ? WHERE id = ? AND user_id = ?", t.Title, t.Completed, t.ID, userID)
+		if err != nil {
+			http.Error(w, "Erro ao atualizar tarefa", http.StatusInternalServerError)
+			return
+		}
+		w.WriteHeader(http.StatusOK)
+	} else if r.Method == http.MethodDelete {
+		id := r.URL.Query().Get("id")
+		_, err := db.Exec("DELETE FROM tasks WHERE id = ? AND user_id = ?", id, userID)
+		if err != nil {
+			http.Error(w, "Erro ao deletar tarefa", http.StatusInternalServerError)
+			return
+		}
+		w.WriteHeader(http.StatusOK)
+	}
+}
+
+// --- COMMIT 11: Middlewares (CORS e Segurança) ---
+func corsMiddleware(next http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+		if r.Method == http.MethodOptions {
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+		next(w, r)
+	}
+}
+
+func authMiddleware(next http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		tokenString := r.Header.Get("Authorization")
+		if len(tokenString) > 7 { tokenString = tokenString[7:] } // Remove "Bearer "
+
+		token, _ := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+			return jwtKey, nil
+		})
+
+		if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+			ctx := r.Context()
+			ctx = context.WithValue(ctx, "user_id", claims["user_id"])
+			next(w, r.WithContext(ctx))
+		} else {
+			http.Error(w, "Não autorizado", http.StatusUnauthorized)
+		}
+	}
+}
