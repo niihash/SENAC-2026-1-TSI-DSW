@@ -11,28 +11,42 @@ async function adicionarTarefa(event) {
     event.preventDefault();
     const input = document.getElementById('new-task');
     const nomeTarefa = input.value.trim();
-
     if (!nomeTarefa) return;
 
-    // EXIBE NA TELA NA HORA (Mesmo sem banco)
-    const idTemporario = Date.now();
+    const idTemporario = `temp-${Date.now()}`;
+
+    // Renderiza com ID temporário
     renderizarTarefaNaTela({
         task_id: idTemporario,
         name: nomeTarefa,
         status: 'pending'
     });
-
     input.value = '';
 
-    // TENTA ENVIAR PARA O BACKEND
     try {
-        await fetch('http://localhost:8080/api/v1/tasks', {
+        const response = await fetch('http://localhost:8080/api/v1/tasks', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ name: nomeTarefa, user_id: 1 })
         });
+
+        const tarefaCriada = await response.json();
+        const idReal = tarefaCriada.task_id;
+
+        // Atualiza o elemento no DOM com o ID real
+        const elemento = document.getElementById(`tarefa-${idTemporario}`);
+        if (elemento && idReal) {
+            elemento.id = `tarefa-${idReal}`;
+
+            const checkbox = elemento.querySelector('input[type="checkbox"]');
+            const botao = elemento.querySelector('button');
+
+            if (checkbox) checkbox.setAttribute('onchange', `alternarStatus(${idReal}, this.checked)`);
+            if (botao) botao.setAttribute('onclick', `deletarTarefa(${idReal})`);
+        }
+
     } catch (error) {
-        console.log("Sinal enviado ao Go! (O erro de banco no terminal é esperado)");
+        console.error("Erro ao salvar tarefa:", error);
     }
 }
 
@@ -43,12 +57,12 @@ async function carregarTarefas() {
         const tarefas = await response.json();
         const lista = document.getElementById('lista-tarefas');
         lista.innerHTML = '';
-        
+
         if (Array.isArray(tarefas)) {
             tarefas.forEach(renderizarTarefaNaTela);
         }
     } catch (error) {
-        console.error("Erro ao carregar do banco, mas você pode adicionar tarefas manualmente agora.");
+        console.error("Erro ao carregar tarefas:", error);
     }
 }
 
@@ -58,7 +72,7 @@ function renderizarTarefaNaTela(tarefa) {
     const li = document.createElement('li');
     li.id = `tarefa-${tarefa.task_id}`;
     li.className = "flex items-center justify-between bg-slate-50 border-2 border-slate-900 p-4 mb-2 shadow-[4px_4px_0px_0px_rgba(0,0,0,0.05)] transition-all";
-    
+
     li.innerHTML = `
         <div class="flex items-center gap-3">
             <input type="checkbox" 
@@ -80,28 +94,28 @@ function renderizarTarefaNaTela(tarefa) {
 async function alternarStatus(id, concluida) {
     const status = concluida ? 'completed' : 'pending';
     const span = document.querySelector(`#tarefa-${id} .task-text`);
-    
-    // Efeito visual imediato
-    if (concluida) {
-        span.classList.add('line-through', 'opacity-50');
-    } else {
-        span.classList.remove('line-through', 'opacity-50');
-    }
+
+    if (!span) return;
+
+    span.classList.toggle('line-through', concluida);
+    span.classList.toggle('opacity-50', concluida);
 
     try {
         await fetch(`http://localhost:8080/api/v1/tasks/${id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ status: status })
+            body: JSON.stringify({ status })
         });
     } catch (error) {
-        console.log("Status alterado visualmente.");
+        // Reverte o estado visual
+        span.classList.toggle('line-through', !concluida);
+        span.classList.toggle('opacity-50', !concluida);
+        console.error("Erro ao atualizar status:", error);
     }
 }
 
 // 5. DELETAR TAREFA (DELETE)
 async function deletarTarefa(id) {
-    // Remove da tela na hora
     const elemento = document.getElementById(`tarefa-${id}`);
     if (elemento) elemento.remove();
 
@@ -110,6 +124,6 @@ async function deletarTarefa(id) {
             method: 'DELETE'
         });
     } catch (error) {
-        console.log("Tarefa removida da tela.");
+        console.error("Erro ao deletar tarefa:", error);
     }
 }
