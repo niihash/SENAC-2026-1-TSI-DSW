@@ -85,6 +85,7 @@ func registerHandler(w http.ResponseWriter, r *http.Request) {
 
 	_, err := db.Exec("INSERT INTO users (username, password_hash) VALUES (?, ?)", user.Username, hashedPassword)
 	if err != nil {
+		log.Println("Erro no registro:", err)
 		http.Error(w, "Erro ao criar usuário", http.StatusInternalServerError)
 		return
 	}
@@ -100,6 +101,9 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 	var storedHash string
 	var userID int
 	err := db.QueryRow("SELECT id, password_hash FROM users WHERE username = ?", user.Username).Scan(&userID, &storedHash)
+	if err != nil {
+		log.Println("Erro no login (usuário não encontrado?):", err)
+	}
 	
 	// Validação de senha
 	if err != nil || bcrypt.CompareHashAndPassword([]byte(storedHash), []byte(user.Password)) != nil {
