@@ -1,0 +1,30 @@
+<!-- --- COMMIT 3: Frontend e Integração --- -->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>To-Do List Seguro</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="auth-section">
+        <h2>Acesso</h2>
+        <input type="text" id="username" placeholder="Usuário">
+        <input type="password" id="password" placeholder="Senha">
+        <button onclick="login()">Entrar</button>
+        <button onclick="register()">Registrar</button>
+    </div>
+
+    <div id="todo-section" style="display: none;">
+        <div class="header-tasks">
+            <h2>Minhas Tarefas</h2>
+            <button onclick="logout()" class="btn-logout">Sair</button>
+        </div>
+        <input type="text" id="newTask" placeholder="Nova tarefa...">
+        <button onclick="addTask()">Adicionar</button>
+        <ul id="taskList"></ul>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
