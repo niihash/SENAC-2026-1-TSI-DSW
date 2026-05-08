@@ -74,3 +74,45 @@ func main() {
 	}
 	log.Println("Servidor encerrado com sucesso.")
 }
+
+// --- COMMIT 9: Handlers de Autenticação (Register/Login) ---
+func registerHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost { return }
+	var user User
+	json.NewDecoder(r.Body).Decode(&user)
+
+	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+
+	_, err := db.Exec("INSERT INTO users (username, password_hash) VALUES (?, ?)", user.Username, hashedPassword)
+	if err != nil {
+		http.Error(w, "Erro ao criar usuário", http.StatusInternalServerError)
+		return
+	}
+	w.WriteHeader(http.StatusCreated)
+}
+
+// JWT
+func loginHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost { return }
+	var user User
+	json.NewDecoder(r.Body).Decode(&user)
+
+	var storedHash string
+	var userID int
+	err := db.QueryRow("SELECT id, password_hash FROM users WHERE username = ?", user.Username).Scan(&userID, &storedHash)
+	
+	// Validação de senha
+	if err != nil || bcrypt.CompareHashAndPassword([]byte(storedHash), []byte(user.Password)) != nil {
+		http.Error(w, "Credenciais inválidas", http.StatusUnauthorized)
+		return
+	}
+
+	// Geração do Token JWT
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"user_id": userID,
+		"exp":     time.Now().Add(time.Hour * 24).Unix(),
+	})
+	tokenString, _ := token.SignedString(jwtKey)
+
+	json.NewEncoder(w).Encode(map[string]string{"token": tokenString})
+}
