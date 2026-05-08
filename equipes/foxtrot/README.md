@@ -1,0 +1,36 @@
+# To-Do List Seguro - SENAC 2026
+
+Aplicação de Lista de Tarefas desenvolvida para a avaliação de Desenvolvimento Seguro para Sistemas de Internet.
+
+## Estrutura do Projeto
+- `frontend/`: Interface SPA em HTML/JS puro.
+- `backend/`: API RESTful em Go.
+- `db/`: Schema inicial do MySQL.
+
+## Como rodar o projeto (Podman/Docker)
+
+Este projeto foi configurado para rodar em containers, garantindo um ambiente isolado e seguro.
+
+### Pré-requisitos
+- Podman (ou Docker)
+- Podman-compose (ou Docker-compose)
+
+### Passo a Passo
+
+1. **Clonar o repositório** (se ainda não o fez).
+2. **Subir os containers:**
+   No diretório raiz da equipe (`/foxtrot`), execute:
+   ```bash
+   podman-compose up --build
+   ```
+   *(Ou `docker-compose up --build` se estiver usando Docker)*
+
+3. **Acessar a aplicação:**
+   - Frontend: [http://localhost](http://localhost)
+   - API: [http://localhost:8080/api/v1](http://localhost:8080/api/v1)
+
+## Decisões de Segurança
+- **SQL Injection:** Uso de *Prepared Statements* em todas as queries.
+- **XSS:** Manipulação de DOM via `textContent` no frontend.
+- **Autenticação:** Implementação de JWT (JSON Web Tokens).
+- **Graceful Shutdown:** Servidor Go configurado para encerrar conexões com segurança.
