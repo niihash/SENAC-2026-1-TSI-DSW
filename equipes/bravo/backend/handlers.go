@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"errors"
+	"log"
 	"net/http"
 	"strconv"
 )
@@ -16,6 +17,9 @@ func (app *App) createTask(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// LOG DE TESTE: Isso vai aparecer no seu terminal mesmo sem banco de dados!
+	log.Printf("📥 RECEBIDO DO FRONTEND: Tarefa '%s' para o usuário %d", req.Name, req.UserID)
+
 	if req.Name == "" {
 		writeError(w, http.StatusBadRequest, "o campo 'name' é obrigatório")
 		return
@@ -25,12 +29,15 @@ func (app *App) createTask(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Aqui o código tenta salvar no banco. 
+	// Se o banco não existir, ele vai dar erro aqui, mas o log acima já terá aparecido!
 	result, err := app.db.Exec(
 		"INSERT INTO tasks (name, user_id) VALUES (?, ?)",
 		req.Name, req.UserID,
 	)
 	if err != nil {
-		writeError(w, http.StatusInternalServerError, "erro ao criar tarefa")
+		log.Printf("❌ ERRO DE BANCO: %v", err)
+		writeError(w, http.StatusInternalServerError, "erro ao criar tarefa no banco")
 		return
 	}
 

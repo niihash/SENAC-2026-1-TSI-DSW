@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,9 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script>
         tailwind.config = {
@@ -21,220 +18,53 @@
                         mono: ['JetBrains Mono', 'monospace'],
                     },
                     colors: {
-                        brand: {
-                            50: '#eff6ff',
-                            100: '#dbeafe',
-                            400: '#60a5fa',
-                            500: '#3b82f6',
-                            600: '#2563eb',
-                            700: '#1d4ed8',
-                            800: '#1e40af',
-                            900: '#1e3a8a',
-                            950: '#0f172a',
-                        }
+                        brand: { 50: '#eff6ff', 100: '#dbeafe', 400: '#60a5fa', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8', 800: '#1e40af', 900: '#1e3a8a', 950: '#0f172a' }
                     }
                 }
             }
         }
     </script>
     <style>
-        /* Neo-brutalist / Aura Build interactive transitions */
-        .input-field {
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .input-field:focus {
-            border-color: #2563eb;
-            box-shadow: 4px 4px 0px 0px rgba(37, 99, 235, 0.15);
-            outline: none;
-            transform: translate(-2px, -2px);
-        }
-
-        .btn-primary {
-            transition: all 0.15s ease-out;
-        }
-
-        .btn-primary:hover {
-            transform: translate(-3px, -3px);
-            box-shadow: 5px 5px 0px 0px #1e3a8a;
-        }
-
-        .btn-primary:active {
-            transform: translate(0px, 0px);
-            box-shadow: 0px 0px 0px 0px #1e3a8a;
-        }
-
-        /* Technical Grid Backgrounds */
-        .bg-grid {
-            background-size: 24px 24px;
-            background-image: linear-gradient(to right, rgba(0, 0, 0, 0.04) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(0, 0, 0, 0.04) 1px, transparent 1px);
-        }
-
-        /* Remove browser autofill background */
-        input:-webkit-autofill,
-        input:-webkit-autofill:hover,
-        input:-webkit-autofill:focus,
-        input:-webkit-autofill:active {
-            -webkit-box-shadow: 0 0 0 30px white inset !important;
-            -webkit-text-fill-color: #0f172a !important;
-            transition: background-color 5000s ease-in-out 0s;
-        }
+        .input-field { transition: all 0.2s ease; }
+        .input-field:focus { border-color: #2563eb; outline: none; transform: translate(-2px, -2px); }
+        .bg-grid { background-size: 24px 24px; background-image: linear-gradient(to right, rgba(0, 0, 0, 0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(0, 0, 0, 0.04) 1px, transparent 1px); }
     </style>
 </head>
-
-<body
-    class="bg-white min-h-screen flex items-center justify-center p-8 font-sans text-slate-900 antialiased selection:bg-brand-200 selection:text-brand-900 bg-grid">
-
-    <!-- Register Container -->
-    <main
-        class="w-full max-w-[450px] relative z-10 bg-white border-2 border-slate-900 p-8 sm:p-10 shadow-[8px_8px_0px_0px_rgba(15,23,42,0.05)] my-8">
-
-        <!-- Header -->
+<body class="bg-white min-h-screen flex items-center justify-center p-8 font-sans text-slate-900 bg-grid">
+    <main class="w-full max-w-[450px] bg-white border-2 border-slate-900 p-10 shadow-[8px_8px_0px_0px_rgba(15,23,42,0.05)]">
         <div class="mb-8">
-            <!-- Brand -->
             <div class="flex items-center gap-3 mb-8">
-                <img src="/assets/logo.svg" alt="Logo do grupo Bravo" class="w-10 h-10">
-                <span class="text-2xl font-bold text-slate-900 tracking-tight">Bravo</span>
+                <img src="../assets/logo.svg" alt="Logo" class="w-10 h-10">
+                <span class="text-2xl font-bold">Bravo</span>
             </div>
-
-            <h2 class="text-2xl font-bold text-slate-900 mb-2 tracking-tight">Crie sua Conta</h2>
-            <div class="w-12 h-1 bg-brand-600 mb-4"></div>
-            <p class="text-slate-500 text-sm font-medium">Preencha os dados abaixo para se registrar no sistema.</p>
+            <h2 class="text-2xl font-bold mb-2">Crie sua Conta</h2>
+            <p class="text-slate-500 text-sm">Preencha os dados para se registrar.</p>
         </div>
-
-        <!-- Form -->
         <form action="#" class="space-y-5">
-
-            <!-- Username -->
             <div class="space-y-2">
-                <label for="username" class="block text-sm font-bold text-slate-900">
-                    Nome de Usuário
-                </label>
-                <div class="relative group">
-                    <div
-                        class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 group-focus-within:text-brand-600 transition-colors">
-                        <i class="ph ph-user text-lg"></i>
-                    </div>
-                    <input type="text" id="username"
-                        class="input-field w-full border-2 border-slate-200 bg-white py-3 pl-10 pr-3 text-slate-900 placeholder-slate-400 text-sm font-medium"
-                        placeholder="nome.usuario" required autocomplete="off">
-                </div>
+                <label class="block text-sm font-bold">Usuário</label>
+                <input type="text" class="input-field w-full border-2 border-slate-200 p-3 text-sm" placeholder="nome.usuario">
             </div>
-
-            <!-- Email -->
             <div class="space-y-2">
-                <label for="email" class="block text-sm font-bold text-slate-900">
-                    E-mail
-                </label>
-                <div class="relative group">
-                    <div
-                        class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 group-focus-within:text-brand-600 transition-colors">
-                        <i class="ph ph-envelope-simple text-lg"></i>
-                    </div>
-                    <input type="email" id="email"
-                        class="input-field w-full border-2 border-slate-200 bg-white py-3 pl-10 pr-3 text-slate-900 placeholder-slate-400 text-sm font-medium"
-                        placeholder="joao@exemplo.com" required autocomplete="email">
+                <label class="block text-sm font-bold">Senha</label>
+                <div class="relative">
+                    <input type="password" id="password" class="input-field w-full border-2 border-slate-200 p-3 text-sm" placeholder="••••••••">
+                    <button type="button" id="toggle-password" class="absolute right-3 top-3 text-slate-400"><i class="ph ph-eye text-lg"></i></button>
                 </div>
             </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                <!-- Password -->
-                <div class="space-y-2">
-                    <label for="password" class="block text-sm font-bold text-slate-900">
-                        Senha
-                    </label>
-                    <div class="relative group">
-                        <div
-                            class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 group-focus-within:text-brand-600 transition-colors">
-                            <i class="ph ph-lock-key text-lg"></i>
-                        </div>
-                        <input type="password" id="password"
-                            class="input-field w-full border-2 border-slate-200 bg-white py-3 pl-10 pr-10 text-slate-900 placeholder-slate-400 text-sm font-medium"
-                            placeholder="••••••••" required>
-                        <button type="button" id="toggle-password"
-                            class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-brand-600 transition-colors focus:outline-none">
-                            <i class="ph ph-eye text-lg"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Confirm Password -->
-                <div class="space-y-2">
-                    <label for="confirm-password" class="block text-sm font-bold text-slate-900">
-                        Confirmar Senha
-                    </label>
-                    <div class="relative group">
-                        <div
-                            class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 group-focus-within:text-brand-600 transition-colors">
-                            <i class="ph ph-lock-key text-lg"></i>
-                        </div>
-                        <input type="password" id="confirm-password"
-                            class="input-field w-full border-2 border-slate-200 bg-white py-3 pl-10 pr-10 text-slate-900 placeholder-slate-400 text-sm font-medium"
-                            placeholder="••••••••" required>
-                        <button type="button" id="toggle-confirm-password"
-                            class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-brand-600 transition-colors focus:outline-none">
-                            <i class="ph ph-eye text-lg"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Submit Button -->
-            <div class="pt-4">
-                <button type="submit"
-                    class="btn-primary w-full bg-brand-600 text-white font-bold py-3.5 px-4 flex justify-center items-center gap-2 text-sm border-2 border-brand-800 tracking-wider">
-                    <span>CADASTRAR</span>
-                    <i class="ph ph-user-plus text-lg"></i>
-                </button>
-            </div>
-            
-            <!-- Login Link -->
+            <button type="submit" class="w-full bg-brand-600 text-white font-bold py-3.5 border-2 border-brand-800 hover:bg-brand-700 transition-all">CADASTRAR</button>
             <div class="text-center pt-2">
-                <p class="text-sm font-medium text-slate-500">
-                    Já possui uma conta? 
-                    <a href="../index.html" class="text-brand-600 hover:text-brand-800 font-bold underline decoration-2 underline-offset-2 transition-colors">
-                        Faça login
-                    </a>
-                </p>
+                <a href="../index.html" class="text-sm text-brand-600 font-bold underline">Faça login</a>
             </div>
         </form>
-
     </main>
-
     <script>
-        // Toggle password visibility for main password field
         const togglePassword = document.getElementById('toggle-password');
         const passwordInput = document.getElementById('password');
-        const eyeIcon = togglePassword.querySelector('i');
-
-        togglePassword.addEventListener('click', function (e) {
-            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-            passwordInput.setAttribute('type', type);
-
-            if (type === 'text') {
-                eyeIcon.classList.replace('ph-eye', 'ph-eye-slash');
-            } else {
-                eyeIcon.classList.replace('ph-eye-slash', 'ph-eye');
-            }
-        });
-
-        // Toggle password visibility for confirm password field
-        const toggleConfirmPassword = document.getElementById('toggle-confirm-password');
-        const confirmPasswordInput = document.getElementById('confirm-password');
-        const confirmEyeIcon = toggleConfirmPassword.querySelector('i');
-
-        toggleConfirmPassword.addEventListener('click', function (e) {
-            const type = confirmPasswordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-            confirmPasswordInput.setAttribute('type', type);
-
-            if (type === 'text') {
-                confirmEyeIcon.classList.replace('ph-eye', 'ph-eye-slash');
-            } else {
-                confirmEyeIcon.classList.replace('ph-eye-slash', 'ph-eye');
-            }
+        togglePassword.addEventListener('click', () => {
+            const type = passwordInput.type === 'password' ? 'text' : 'password';
+            passwordInput.type = type;
         });
     </script>
 </body>
-
 </html>

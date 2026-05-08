@@ -5,293 +5,42 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bravo | Workspace</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        mono: ['JetBrains Mono', 'monospace'],
-                    },
-                    colors: {
-                        brand: {
-                            50: '#eff6ff',
-                            100: '#dbeafe',
-                            400: '#60a5fa',
-                            500: '#3b82f6',
-                            600: '#2563eb',
-                            700: '#1d4ed8',
-                            800: '#1e40af',
-                            900: '#1e3a8a',
-                            950: '#0f172a',
-                        }
-                    }
-                }
-            }
-        }
+        tailwind.config = { theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'] }, colors: { brand: { 600: '#2563eb', 800: '#1e40af' } } } } }
     </script>
     <style>
-        /* Neo-brutalist interactive transitions */
-        .input-field {
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        .input-field:focus {
-            border-color: #2563eb;
-            box-shadow: 4px 4px 0px 0px rgba(37, 99, 235, 0.15);
-            outline: none;
-            transform: translate(-2px, -2px);
-        }
-
-        .btn-primary {
-            transition: all 0.15s ease-out;
-        }
-
-        .btn-primary:hover {
-            transform: translate(-3px, -3px);
-            box-shadow: 4px 4px 0px 0px #1e3a8a;
-        }
-        
-        .btn-primary:active {
-            transform: translate(0px, 0px);
-            box-shadow: 0px 0px 0px 0px #1e3a8a;
-        }
-
-        .btn-icon {
-            transition: all 0.15s ease-out;
-        }
-
-        .btn-icon:hover {
-            transform: translate(-2px, -2px);
-            box-shadow: 2px 2px 0px 0px #0f172a;
-        }
-        
-        .btn-icon:active {
-            transform: translate(0px, 0px);
-            box-shadow: 0px 0px 0px 0px #0f172a;
-        }
-
-        /* Technical Grid Backgrounds */
-        .bg-grid {
-            background-size: 24px 24px;
-            background-image: linear-gradient(to right, rgba(0, 0, 0, 0.04) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(0, 0, 0, 0.04) 1px, transparent 1px);
-        }
-
-        /* Custom square checkbox */
-        .checkbox-minimal {
-            appearance: none;
-            background-color: #fff;
-            margin: 0;
-            font: inherit;
-            color: currentColor;
-            width: 1.25rem;
-            height: 1.25rem;
-            border: 2px solid #cbd5e1; /* border-slate-300 */
-            display: grid;
-            place-content: center;
-            transition: all 0.1s ease-in-out;
-            cursor: pointer;
-        }
-
-        .checkbox-minimal::before {
-            content: "";
-            width: 0.75em;
-            height: 0.75em;
-            transform: scale(0);
-            transition: 120ms transform ease-in-out;
-            box-shadow: inset 1em 1em #2563eb; /* bg-brand-600 */
-            transform-origin: center;
-            clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
-        }
-
-        .checkbox-minimal:checked {
-            border-color: #2563eb;
-        }
-
-        .checkbox-minimal:checked::before {
-            transform: scale(1);
-        }
-        
-        .checkbox-minimal:focus-visible {
-            outline: 2px solid #2563eb;
-            outline-offset: 2px;
-        }
-
-        /* Completed task style */
-        .task-completed .task-text {
-            text-decoration: line-through;
-            color: #94a3b8; /* text-slate-400 */
-        }
+        .bg-grid { background-size: 24px 24px; background-image: linear-gradient(to right, rgba(0,0,0,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.04) 1px, transparent 1px); }
+        .task-completed .task-text { text-decoration: line-through; color: #94a3b8; }
+        .checkbox-minimal { appearance: none; width: 1.25rem; height: 1.25rem; border: 2px solid #cbd5e1; cursor: pointer; display: grid; place-content: center; }
+        .checkbox-minimal:checked { border-color: #2563eb; background-color: #2563eb; }
+        .checkbox-minimal:checked::before { content: "✓"; color: white; font-size: 0.8rem; }
     </style>
 </head>
-<body class="bg-white min-h-screen font-sans text-slate-900 antialiased selection:bg-brand-200 selection:text-brand-900 bg-grid flex flex-col">
-
-    <!-- Navbar -->
-    <header class="w-full bg-white border-b-2 border-slate-900 px-6 py-4 flex justify-between items-center z-20 shadow-sm relative">
+<body class="bg-white min-h-screen font-sans bg-grid flex flex-col">
+    <header class="w-full bg-white border-b-2 border-slate-900 px-6 py-4 flex justify-between items-center">
         <div class="flex items-center gap-3">
-            <img src="/assets/logo.svg" alt="Logo" class="w-8 h-8" onerror="this.outerHTML='<div class=\'w-8 h-8 bg-brand-600 flex items-center justify-center border border-brand-500\'><i class=\'ph ph-check-square text-white text-base\'></i></div>'">
-            <span class="text-xl font-bold text-slate-900 tracking-tight">Bravo</span>
-            <div class="hidden sm:flex items-center gap-2 bg-slate-50 px-2 py-1 border border-slate-200 ml-4">
-                <span class="w-2 h-2 bg-emerald-500 animate-pulse"></span>
-                <span class="font-mono text-[10px] tracking-wider text-slate-500 font-bold">SYSTEM ONLINE</span>
-            </div>
+            <img src="../assets/logo.svg" alt="Logo" class="w-8 h-8">
+            <span class="text-xl font-bold">Bravo</span>
         </div>
-        <div class="flex items-center gap-4">
-            <span class="font-mono text-xs font-bold text-slate-600 hidden sm:block">usuario.admin</span>
-            <a href="../index.html" class="flex items-center gap-2 text-sm font-bold text-red-600 hover:text-red-700 transition-colors border-2 border-transparent hover:border-red-200 px-2 py-1">
-                SAIR
-                <i class="ph ph-sign-out text-lg"></i>
-            </a>
-        </div>
+        <a href="../index.html" class="text-sm font-bold text-red-600">SAIR</a>
     </header>
 
-    <!-- Main Content -->
-    <main class="flex-1 w-full max-w-3xl mx-auto p-4 sm:p-8 relative z-10 flex flex-col mt-4">
-        
-        <!-- App Container -->
-        <div class="w-full bg-white border-2 border-slate-900 p-6 sm:p-10 shadow-[8px_8px_0px_0px_rgba(15,23,42,0.05)] relative flex flex-col min-h-[600px]">
+    <main class="flex-1 w-full max-w-3xl mx-auto p-8">
+        <div class="bg-white border-2 border-slate-900 p-10 shadow-[8px_8px_0px_0px_rgba(0,0,0,0.05)] relative">
+            <h1 class="text-3xl font-bold mb-6 tracking-tight">Painel de Tarefas</h1>
             
-            <!-- Technical Tag -->
-            <div class="absolute -top-3 -right-3 bg-brand-600 text-white font-mono text-[10px] px-2.5 py-1 tracking-widest border border-brand-800 shadow-sm">
-                WORKSPACE
-            </div>
-
-            <!-- Header -->
-            <div class="mb-8 flex justify-between items-end border-b-2 border-slate-100 pb-6">
-                <div>
-                    <h1 class="text-3xl font-bold text-slate-900 mb-2 tracking-tight">Painel de Tarefas</h1>
-                    <div class="w-12 h-1 bg-brand-600 mb-3"></div>
-                    <p class="text-slate-500 text-sm font-medium">Gerencie suas atividades diárias e acompanhe seu progresso.</p>
-                </div>
-                <div class="hidden sm:block text-right font-mono text-[10px] text-slate-400 leading-relaxed tracking-widest font-bold">
-                    [ TOTAL: 3 ]<br>
-                    [ PENDENTES: 2 ]
-                </div>
-            </div>
-
-            <!-- Add Task Form -->
-            <form action="#" class="mb-8 relative flex gap-3">
-                <div class="relative flex-1 group">
-                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 group-focus-within:text-brand-600 transition-colors">
-                        <i class="ph ph-plus-circle text-xl"></i>
-                    </div>
-                    <input type="text" id="new-task" class="input-field w-full border-2 border-slate-200 bg-white py-3.5 pl-11 pr-3 text-slate-900 placeholder-slate-400 text-sm font-medium" placeholder="Adicionar nova tarefa..." autocomplete="off">
-                </div>
-                <button type="submit" class="btn-primary bg-brand-600 text-white font-bold px-6 flex justify-center items-center gap-2 text-sm border-2 border-brand-800 tracking-wider">
-                    <span class="hidden sm:block">ADICIONAR</span>
-                    <i class="ph ph-paper-plane-right text-lg"></i>
-                </button>
+            <form id="form-tarefa" class="mb-8 flex gap-3">
+                <input type="text" id="new-task" class="flex-1 border-2 border-slate-200 p-3 text-sm" placeholder="Adicionar nova tarefa..." autocomplete="off">
+                <button type="submit" class="bg-brand-600 text-white font-bold px-6 border-2 border-brand-800 hover:bg-brand-700 transition-all">ADICIONAR</button>
             </form>
 
-            <!-- Task List -->
-            <ul class="flex-1 space-y-3">
-                
-                <!-- Active Task 1 -->
-                <li class="flex items-center justify-between p-4 border-2 border-slate-200 bg-white hover:border-slate-400 transition-colors group">
-                    <div class="flex items-center gap-4 flex-1">
-                        <input type="checkbox" class="checkbox-minimal flex-shrink-0 cursor-pointer" id="task-1">
-                        <label for="task-1" class="task-text text-sm font-bold text-slate-800 cursor-pointer flex-1 pt-0.5 select-none">
-                            Implementar autenticação de usuários
-                        </label>
-                    </div>
-                    <div class="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button type="button" class="btn-icon w-8 h-8 flex items-center justify-center border-2 border-slate-200 text-slate-400 hover:text-red-500 hover:border-red-200 bg-white" title="Excluir tarefa">
-                            <i class="ph ph-trash text-lg"></i>
-                        </button>
-                    </div>
-                </li>
-
-                <!-- Active Task 2 -->
-                <li class="flex items-center justify-between p-4 border-2 border-slate-200 bg-white hover:border-slate-400 transition-colors group">
-                    <div class="flex items-center gap-4 flex-1">
-                        <input type="checkbox" class="checkbox-minimal flex-shrink-0 cursor-pointer" id="task-2">
-                        <label for="task-2" class="task-text text-sm font-bold text-slate-800 cursor-pointer flex-1 pt-0.5 select-none">
-                            Criar modelagem do banco de dados (Entidade Todo)
-                        </label>
-                    </div>
-                    <div class="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button type="button" class="btn-icon w-8 h-8 flex items-center justify-center border-2 border-slate-200 text-slate-400 hover:text-red-500 hover:border-red-200 bg-white" title="Excluir tarefa">
-                            <i class="ph ph-trash text-lg"></i>
-                        </button>
-                    </div>
-                </li>
-
-                <!-- Completed Task -->
-                <li class="task-completed flex items-center justify-between p-4 border-2 border-slate-200 bg-slate-50 transition-colors group">
-                    <div class="flex items-center gap-4 flex-1">
-                        <input type="checkbox" class="checkbox-minimal flex-shrink-0 cursor-pointer" id="task-3" checked>
-                        <label for="task-3" class="task-text text-sm font-bold cursor-pointer flex-1 pt-0.5 select-none">
-                            Finalizar layout da tela de login no Frontend
-                        </label>
-                    </div>
-                    <div class="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button type="button" class="btn-icon w-8 h-8 flex items-center justify-center border-2 border-slate-200 text-slate-400 hover:text-red-500 hover:border-red-200 bg-white" title="Excluir tarefa">
-                            <i class="ph ph-trash text-lg"></i>
-                        </button>
-                    </div>
-                </li>
-
-            </ul>
-
-            <!-- Empty State (Para ser usado no Backend quando a lista estiver vazia) -->
-            <!-- 
-            <div class="flex flex-col items-center justify-center py-12 text-center h-full">
-                <div class="w-16 h-16 bg-slate-100 border-2 border-slate-200 flex items-center justify-center mb-4 text-slate-400">
-                    <i class="ph ph-check-square-offset text-3xl"></i>
-                </div>
-                <h3 class="text-lg font-bold text-slate-900 mb-1">Nenhuma tarefa pendente</h3>
-                <p class="text-sm text-slate-500 font-medium">Tudo limpo por aqui. Adicione uma nova tarefa acima.</p>
-            </div> 
-            -->
-
-            <!-- Footer Info -->
-            <div class="mt-8 border-t-2 border-slate-100 pt-6 flex justify-between items-center text-xs font-mono font-bold text-slate-400 uppercase tracking-widest">
-                <span>[ DB_SYNC_STANDBY ]</span>
-                <span>DATA: <script>document.write(new Date().toLocaleDateString('pt-BR'))</script></span>
-            </div>
-
+            <ul id="lista-tarefas" class="space-y-3">
+                </ul>
         </div>
     </main>
 
-    <!-- Script visual para demonstração de interatividade -->
-    <script>
-        // Lógica de UI apenas para fins de visualização do Mock
-        document.querySelectorAll('.checkbox-minimal').forEach(checkbox => {
-            checkbox.addEventListener('change', function() {
-                const li = this.closest('li');
-                if (this.checked) {
-                    li.classList.add('task-completed');
-                    li.classList.replace('bg-white', 'bg-slate-50');
-                } else {
-                    li.classList.remove('task-completed');
-                    li.classList.replace('bg-slate-50', 'bg-white');
-                }
-            });
-        });
-
-        // Simulação de remoção de item
-        document.querySelectorAll('.btn-icon').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const li = this.closest('li');
-                li.style.display = 'none';
-            });
-        });
-        
-        // Simulação de inserção (apenas exibe um log visual que deve ser trocado pelo POST real da API)
-        const form = document.querySelector('form');
-        form.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const input = document.getElementById('new-task');
-            if(input.value.trim() === '') return;
-            
-            alert('Ação disparada: Adicionar nova tarefa: "' + input.value + '"\n[Aguardando integração com Backend]');
-            input.value = '';
-        });
-    </script>
+    <script src="api.js"></script>
 </body>
 </html>
