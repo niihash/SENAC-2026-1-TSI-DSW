@@ -157,3 +157,35 @@ func tasksHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// --- COMMIT 11: Middlewares (CORS e Segurança) ---
+func corsMiddleware(next http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+		if r.Method == http.MethodOptions {
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+		next(w, r)
+	}
+}
+
+func authMiddleware(next http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		tokenString := r.Header.Get("Authorization")
+		if len(tokenString) > 7 { tokenString = tokenString[7:] } // Remove "Bearer "
+
+		token, _ := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+			return jwtKey, nil
+		})
+
+		if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+			ctx := r.Context()
+			ctx = context.WithValue(ctx, "user_id", claims["user_id"])
+			next(w, r.WithContext(ctx))
+		} else {
+			http.Error(w, "Não autorizado", http.StatusUnauthorized)
+		}
+	}
+}
