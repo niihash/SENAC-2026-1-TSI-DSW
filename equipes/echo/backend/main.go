@@ -11,18 +11,9 @@ import (
 
 func enableCORS(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-
 		w.Header().Set("Access-Control-Allow-Origin", "*")
-
-		w.Header().Set(
-			"Access-Control-Allow-Methods",
-			"GET, POST, PUT, DELETE, OPTIONS",
-		)
-
-		w.Header().Set(
-			"Access-Control-Allow-Headers",
-			"Content-Type",
-		)
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 
 		if r.Method == "OPTIONS" {
 			w.WriteHeader(http.StatusOK)
@@ -51,7 +42,16 @@ func main() {
 	r.HandleFunc("/login", controller.Login).Methods("POST")
 	r.HandleFunc("/logout", controller.Logout).Methods("POST")
 
+	// Melhor maneira: define o arquivo principal na raiz para nao listar diretorio
+	r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "frontend/login.html")
+	})
+
+	// Esta rota deve vir por ultimo. Ela serve os arquivos da pasta frontend
+	r.PathPrefix("/").Handler(http.FileServer(http.Dir("frontend/")))
+
 	log.Println("Servidor rodando na porta 8080")
 
-	http.ListenAndServe(":8080", enableCORS(r))
+	// "0.0.0.0" para o container aceitar conexões de fora (navegador)
+	http.ListenAndServe("0.0.0.0:8080", enableCORS(r))
 }

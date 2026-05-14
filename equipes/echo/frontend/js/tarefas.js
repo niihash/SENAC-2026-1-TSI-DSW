@@ -1,129 +1,145 @@
-// Seleção de elementos do DOM
+//auth
+if (!SessionManager.getUserId()) {
+    window.location.replace('login.html');
+}
+
 const taskInput = document.getElementById('task-input');
 const addBtn = document.getElementById('add-btn');
 const taskList = document.getElementById('task-list');
-const filterBtns = document.querySelectorAll('.filter-btn');
 
 let allTasks = [];
-let currentFilter = 'all';
 
-// Carregar tarefas iniciais
+// Carrega as tarefas do banco
 window.loadTasks = async function() {
-    try {
+    const userId = SessionManager.getUserId();
+
+    if (!userId) {
+        window.location.href = 'login.html';
+        return; // para aqui e não executa mais nada
+    }
+
+    const email = SessionManager.getUserEmail();
+    const titulo = document.querySelector('h1');
+    if (titulo && email) {
+        titulo.innerText = `Tarefas de: ${email}`;
+    }
+
+   try {
         const data = await api.getTasks();
-        allTasks = data || [];
+        if (Array.isArray(data)) {
+            allTasks = data;
+        } else {
+            allTasks = [];
+        }
         render();
     } catch (error) {
-        taskList.innerHTML = <li>Erro ao carregar tarefas: ${error.message}</li>;
+        console.error("Erro ao carregar:", error);
     }
 };
 
-// Adicionar nova tarefa
-async function handleAddTask() {
+// Adiciona nova tarefa
+async function adicionarTarefa() {
     const title = taskInput.value.trim();
     if (!title) return;
-
+    
     try {
         const savedTask = await api.createTask(title);
-        allTasks.push(savedTask);
-        taskInput.value = '';
-        render();
+        // Garante que pega a tarefa retornada pelo back ou recarrega a lista
+        if (savedTask && (savedTask.id || savedTask.ID)) {
+            allTasks.push(savedTask);
+            taskInput.value = '';
+            render();
+        } else {
+            window.loadTasks();
+            taskInput.value = '';
+        }
     } catch (error) {
-        alert('Erro ao adicionar tarefa: ' + error.message);
+        alert('Erro ao adicionar: ' + error.message);
     }
 }
 
-// Alternar status da tarefa (concluída/pendente)
-window.toggleTask = async function(id, currentStatus) {
+// Inverte o status
+window.alternarStatus = async function(taskId) {
     try {
-        await api.updateTask(id, !currentStatus);
-        const index = allTasks.findIndex(t => t.id === id);
+        const index = allTasks.findIndex(t => (t.id || t.ID) === taskId);
         if (index > -1) {
-            allTasks[index].done = !currentStatus;
+            const statusAtual = allTasks[index].done || allTasks[index].Done;
+            const novoStatus = !statusAtual;
+            
+            // Atualiza a memória local
+            allTasks[index].done = novoStatus;
+            allTasks[index].Done = novoStatus;
+            
+            // Envia para o banco
+            await api.updateTask(allTasks[index]);
             render();
         }
     } catch (error) {
-        alert('Erro ao atualizar status: ' + error.message);
+        alert('Erro ao atualizar no banco.');
+        window.loadTasks(); // Se der erro no back, desfaz na tela
     }
 };
 
-// Excluir tarefa
-window.deleteTask = async function(id) {
-    if (!confirm('Deseja realmente excluir esta tarefa?')) return;
+// Exclui a tarefa
+window.excluirTarefa = async function(taskId) {
+    if (!confirm('Deseja excluir esta tarefa?')) return;
     try {
-        await api.deleteTask(id);
-        allTasks = allTasks.filter(t => t.id !== id);
+        await api.deleteTask(taskId);
+        allTasks = allTasks.filter(t => (t.id || t.ID) !== taskId);
         render();
     } catch (error) {
-        alert('Erro ao excluir tarefa: ' + error.message);
+        alert('Erro ao excluir: ' + error.message);
     }
 };
 
-// Renderização da lista com suporte a filtros
+// Renderiza na tela SEGUINDO SEU CSS
 function render() {
     if (!taskList) return;
     taskList.innerHTML = '';
     
-    // Aplica o filtro selecionado
-    const filtered = allTasks.filter(t => {
-        if (currentFilter === 'pending') return !t.done;
-        if (currentFilter === 'completed') return t.done;
-        return true;
-    });
-
-    if (filtered.length === 0) {
-        taskList.innerHTML = '<li>Nenhuma tarefa encontrada.</li>';
-        return;
-    }
-
-    // Cria os elementos da lista
-    filtered.forEach(t => {
-        const li = document.createElement('li');
-        li.style.display = 'flex';
-        li.style.justifyContent = 'space-between';
-        li.style.marginBottom = '8px';
-
-        const div = document.createElement('div');
+    allTasks.forEach(t => {
+        const taskId = t.id || t.ID;
+        const isDone = t.done || t.Done;
+        const title = t.title || t.Title;
         
-        const check = document.createElement('input');
-        check.type = 'checkbox';
-        check.checked = t.done;
-        check.style.marginRight = '8px';
-        check.addEventListener('change', () => window.toggleTask(t.id, t.done));
+        // <li> principal
+        const li = document.createElement('li');
+        if (isDone) li.classList.add('completed'); 
 
+        // <span> do texto da tarefa
         const span = document.createElement('span');
-        span.textContent = t.title;
-        if (t.done) span.style.textDecoration = 'line-through';
+        span.className = 'task-text'; 
+        span.textContent = title;
 
-        div.appendChild(check);
-        div.appendChild(span);
+        // <div> das ações
+        const divActions = document.createElement('div');
+        divActions.className = 'actions'; 
 
-        const btn = document.createElement('button');
-        btn.textContent = 'Excluir';
-        btn.className = 'btn-delete';
-        btn.addEventListener('click', () => window.deleteTask(t.id));
+        // Botão Concluir
+        const btnDone = document.createElement('button');
+        btnDone.className = 'btn-done'; 
+        btnDone.textContent = '✓';
+        btnDone.onclick = () => window.alternarStatus(taskId);
 
-        li.appendChild(div);
-        li.appendChild(btn);
+        // Botão Excluir
+        const btnDelete = document.createElement('button');
+        btnDelete.className = 'btn-delete'; 
+        btnDelete.textContent = 'X';
+        btnDelete.onclick = () => window.excluirTarefa(taskId);
+
+        divActions.append(btnDone, btnDelete);
+        li.append(span, divActions);
         taskList.appendChild(li);
     });
 }
 
-// Configuração dos ouvintes de eventos
-filterBtns.forEach(btn => {
-    btn.addEventListener('click', (e) => {
-        currentFilter = e.target.getAttribute('data-filter');
-        render();
+// Eventos de clique e enter
+if (addBtn) addBtn.onclick = adicionarTarefa;
+if (taskInput) {
+    taskInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') adicionarTarefa();
     });
-});
-
-addBtn?.addEventListener('click', handleAddTask);
-
-taskInput?.addEventListener('keypress', (e) => { 
-    if (e.key === 'Enter') handleAddTask(); 
-});
-
-// Inicialização automática
-if (taskList) {
-    window.loadTasks();
 }
+
+// Inicia as tarefas
+if (taskList) window.loadTasks();
