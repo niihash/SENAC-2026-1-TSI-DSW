@@ -1,71 +1,79 @@
 const API_BASE_URL = 'http://localhost:8080';
 
-const api = {
-    // Autenticação de usuário
+var api = {
     async login(email, password) {
-        const res = await fetch(${API_BASE_URL}/login, {
+        const res = await fetch(`${API_BASE_URL}/login`,{
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, password })
         });
-        
-        if (!res.ok) throw new Error('Credenciais inválidas ou erro no servidor.');
-        
+        if (!res.ok) throw new Error('Credenciais inválidas');
         const userData = await res.json();
-        
-        // Salva os dados na sessão através do SessionManager
         SessionManager.saveSession(userData);
-        
         return userData;
     },
 
-    // Busca tarefas filtradas pelo ID do usuário logado
-    async getTasks() {
-        const userId = SessionManager.getUserId();
-        
-        // Envia o user_id na URL para o backend Go filtrar os resultados
-        const res = await fetch(${API_BASE_URL}/tasks?user_id=${userId});
-        
-        if (!res.ok) throw new Error('Erro ao buscar tarefas. Verifique a conexão com a API.');
+    async register(email, password) {
+        const res = await fetch(`${API_BASE_URL}/register`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+        });
+        if (!res.ok) throw new Error('Erro ao cadastrar. Tente outro e-mail.');
         return await res.json();
     },
+    
+    // Busca tarefas
+    async getTasks() {
+        const userId = SessionManager.getUserId();
+        const res = await fetch(`${API_BASE_URL}/tasks?user_id=${userId}`);
+        if (!res.ok) throw new Error('Erro ao buscar tarefas');
+        const response = await res.json();
+        return response.data || [];
+    },
 
-    // Cria uma nova tarefa vinculada ao usuário atual
+    // Cria tarefa
     async createTask(title) {
         const userId = SessionManager.getUserId();
-        
-        const res = await fetch(${API_BASE_URL}/tasks, {
+        const res = await fetch(`${API_BASE_URL}/tasks`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ 
                 title: title, 
-                user_id: parseInt(userId), 
+                user_id: Number(userId), 
                 done: false 
             })
         });
-        
-        if (!res.ok) throw new Error('Erro ao criar tarefa no banco de dados.');
-        return await res.json();
+        if (!res.ok) throw new Error('Erro ao criar');
+        const response = await res.json();
+        return response.data; // Retorna a tarefa com ID
     },
 
-    // Atualiza o status de uma tarefa existente
-    async updateTask(id, done) {
-        const res = await fetch(${API_BASE_URL}/tasks/${id}, {
+    // Atualiza status
+    async updateTask(taskData) {
+        const taskId = taskData.id || taskData.ID;
+        const res = await fetch(`${API_BASE_URL}/tasks/${taskId}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ done: done })
+            body: JSON.stringify({
+                id: Number(taskId),
+                user_id: Number(taskData.user_id || taskData.UserID),
+                title: taskData.title || taskData.Title,
+                done: Boolean(taskData.done || taskData.Done) 
+            })
         });
-        
-        if (!res.ok) throw new Error('Erro ao atualizar a tarefa. Rota PUT não encontrada ou inválida.');
+        if (!res.ok) throw new Error('Erro ao atualizar');
         return await res.json();
     },
 
-    // Remove uma tarefa do banco
-    async deleteTask(id) {
-        const res = await fetch(${API_BASE_URL}/tasks/${id}, {
-            method: 'DELETE'
+    // Deleta tarefa
+    async deleteTask(taskId) {
+        const userId = SessionManager.getUserId();
+        const res = await fetch(`${API_BASE_URL}/tasks/${taskId}`, {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ user_id: Number(userId) })
         });
-        
-        if (!res.ok) throw new Error('Erro ao excluir a tarefa. Rota DELETE não encontrada ou inválida.');
+        if (!res.ok) throw new Error('Erro ao excluir');
     }
 };
