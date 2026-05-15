@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bravo | Registro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        brand: { 50: '#eff6ff', 100: '#dbeafe', 400: '#60a5fa', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8', 800: '#1e40af', 900: '#1e3a8a', 950: '#0f172a' }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .input-field { transition: all 0.2s ease; }
+        .input-field:focus { border-color: #2563eb; outline: none; transform: translate(-2px, -2px); }
+        .bg-grid { background-size: 24px 24px; background-image: linear-gradient(to right, rgba(0, 0, 0, 0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(0, 0, 0, 0.04) 1px, transparent 1px); }
+    </style>
+</head>
+<body class="bg-white min-h-screen flex items-center justify-center p-8 font-sans text-slate-900 bg-grid">
+    <main class="w-full max-w-[450px] bg-white border-2 border-slate-900 p-10 shadow-[8px_8px_0px_0px_rgba(15,23,42,0.05)]">
+        <div class="mb-8">
+            <div class="flex items-center gap-3 mb-8">
+                <img src="../assets/logo.svg" alt="Logo" class="w-10 h-10">
+                <span class="text-2xl font-bold">Bravo</span>
+            </div>
+            <h2 class="text-2xl font-bold mb-2">Crie sua Conta</h2>
+            <p class="text-slate-500 text-sm">Preencha os dados para se registrar.</p>
+        </div>
+        <form action="#" class="space-y-5">
+            <div class="space-y-2">
+                <label class="block text-sm font-bold">Usuário</label>
+                <input type="text" class="input-field w-full border-2 border-slate-200 p-3 text-sm" placeholder="nome.usuario">
+            </div>
+            <div class="space-y-2">
+                <label class="block text-sm font-bold">Senha</label>
+                <div class="relative">
+                    <input type="password" id="password" class="input-field w-full border-2 border-slate-200 p-3 text-sm" placeholder="••••••••">
+                    <button type="button" id="toggle-password" class="absolute right-3 top-3 text-slate-400"><i class="ph ph-eye text-lg"></i></button>
+                </div>
+            </div>
+            <button type="submit" class="w-full bg-brand-600 text-white font-bold py-3.5 border-2 border-brand-800 hover:bg-brand-700 transition-all">CADASTRAR</button>
+            <div class="text-center pt-2">
+                <a href="../index.html" class="text-sm text-brand-600 font-bold underline">Faça login</a>
+            </div>
+        </form>
+    </main>
+    <script>
+        const togglePassword = document.getElementById('toggle-password');
+        const passwordInput = document.getElementById('password');
+        togglePassword.addEventListener('click', () => {
+            const type = passwordInput.type === 'password' ? 'text' : 'password';
+            passwordInput.type = type;
+        });
+    </script>
+</body>
+</html>

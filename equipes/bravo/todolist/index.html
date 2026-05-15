@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bravo | Workspace</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script>
+        tailwind.config = { theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'] }, colors: { brand: { 600: '#2563eb', 800: '#1e40af' } } } } }
+    </script>
+    <style>
+        .bg-grid { background-size: 24px 24px; background-image: linear-gradient(to right, rgba(0,0,0,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.04) 1px, transparent 1px); }
+        .task-completed .task-text { text-decoration: line-through; color: #94a3b8; }
+        .checkbox-minimal { appearance: none; width: 1.25rem; height: 1.25rem; border: 2px solid #cbd5e1; cursor: pointer; display: grid; place-content: center; }
+        .checkbox-minimal:checked { border-color: #2563eb; background-color: #2563eb; }
+        .checkbox-minimal:checked::before { content: "✓"; color: white; font-size: 0.8rem; }
+    </style>
+</head>
+<body class="bg-white min-h-screen font-sans bg-grid flex flex-col">
+    <header class="w-full bg-white border-b-2 border-slate-900 px-6 py-4 flex justify-between items-center">
+        <div class="flex items-center gap-3">
+            <img src="../assets/logo.svg" alt="Logo" class="w-8 h-8">
+            <span class="text-xl font-bold">Bravo</span>
+        </div>
+        <a href="../index.html" class="text-sm font-bold text-red-600">SAIR</a>
+    </header>
+
+    <main class="flex-1 w-full max-w-3xl mx-auto p-8">
+        <div class="bg-white border-2 border-slate-900 p-10 shadow-[8px_8px_0px_0px_rgba(0,0,0,0.05)] relative">
+            <h1 class="text-3xl font-bold mb-6 tracking-tight">Painel de Tarefas</h1>
+            
+            <form id="form-tarefa" class="mb-8 flex gap-3">
+                <input type="text" id="new-task" class="flex-1 border-2 border-slate-200 p-3 text-sm" placeholder="Adicionar nova tarefa..." autocomplete="off">
+                <button type="submit" class="bg-brand-600 text-white font-bold px-6 border-2 border-brand-800 hover:bg-brand-700 transition-all">ADICIONAR</button>
+            </form>
+
+            <ul id="lista-tarefas" class="space-y-3">
+                </ul>
+        </div>
+    </main>
+
+    <script src="api.js"></script>
+</body>
+</html>
